@@ -126,6 +126,7 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 
 imgs = np.load(os.path.join(output_path, "images_0000_0000.npy"))
 masks = np.load(os.path.join(output_path, "masks_0000_0000.npy"))
+#显示图片
 for i in range(len(imgs)):
     print ("image %d", i)
     fig,ax = plt.subplots(2,2,figsize=[8,8])
