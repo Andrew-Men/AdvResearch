@@ -11,7 +11,13 @@ import csv
 import os
 from glob import glob
 import pandas as pd
+
+# FIX CRASH #
+import matplotlib
+matplotlib.use("TkAgg")
+# --------- #
 import matplotlib.pyplot as plt
+
 try:
     from tqdm import tqdm # long waits are not fun
 except:
