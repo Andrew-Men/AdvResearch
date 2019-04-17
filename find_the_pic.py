@@ -18,9 +18,8 @@ except:
     print('TQDM does make much nicer wait bars...')
     tqdm = lambda x: x
 
-luna_path = "D:\2019GaoJiKeYanShiXun\LUNA16"
-luna_subset_path = luna_path+"subset0/"
-output_path = "D:\2019GaoJiKeYanShiXun\LUNA16\output"
+luna_subset_path = os.path.join("subset0")
+output_path = os.path.join("output")
 file_list=glob(luna_subset_path+"*.mhd")
 
 #####################
@@ -82,8 +81,8 @@ def get_filename(case):
 #####
 #
 # The locations of the nodes
-df_node = pd.read_csv(luna_path+"annotations.csv")
-df_node["file"] = df_node["seriesuid"].map(lambda file_name: get_filename(file_list, file_name))
+df_node = pd.read_csv("annotations.csv")
+df_node["file"] = df_node["seriesuid"].map(lambda file_name: get_filename(file_name))
 df_node = df_node.dropna()
 
 #####
@@ -119,8 +118,8 @@ for fcount, img_file in enumerate(tqdm(file_list)):
             np.save(os.path.join(output_path,"masks_%04d_%04d.npy" % (fcount, node_idx)),masks)
 
 
-imgs = np.load(output_path+'images_0.npy')
-masks = np.load(output_path+'masks_0.npy')
+imgs = np.load(os.path.join(output_path, "images_0.npy"))
+masks = np.load(os.path.join(output_path, "masks_0.npy"))
 for i in range(len(imgs)):
     print ("image %d", i)
     fig,ax = plt.subplots(2,2,figsize=[8,8])
