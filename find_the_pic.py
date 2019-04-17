@@ -20,7 +20,7 @@ except:
 
 luna_subset_path = os.path.join("subset0")
 output_path = os.path.join("output")
-file_list=glob(luna_subset_path+"*.mhd")
+file_list=glob(os.path.join(luna_subset_path,"*.mhd"))
 
 #####################
 #
@@ -64,8 +64,8 @@ z = z position of slice in world coordinates mm
 
 def matrix2int16(matrix):
     ''' 
-matrix must be a numpy array NXN
-Returns uint16 version
+    matrix must be a numpy array NXN
+    Returns uint16 version
     '''
     m_min= np.min(matrix)
     m_max= np.max(matrix)
@@ -118,8 +118,8 @@ for fcount, img_file in enumerate(tqdm(file_list)):
             np.save(os.path.join(output_path,"masks_%04d_%04d.npy" % (fcount, node_idx)),masks)
 
 
-imgs = np.load(os.path.join(output_path, "images_0.npy"))
-masks = np.load(os.path.join(output_path, "masks_0.npy"))
+imgs = np.load(os.path.join(output_path, "images_0000_0000.npy"))
+masks = np.load(os.path.join(output_path, "masks_0000_0000.npy"))
 for i in range(len(imgs)):
     print ("image %d", i)
     fig,ax = plt.subplots(2,2,figsize=[8,8])
