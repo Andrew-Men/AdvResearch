@@ -52,20 +52,33 @@ z = z position of slice in world coordinates mm
     v_ymin = np.max([0,int(v_center[1]-v_diam)-5]) 
     v_ymax = np.min([height-1,int(v_center[1]+v_diam)+5])
 
+
+    # Convert back to world coordinates for distance calculation
+        #x_data = [x*spacing[0]+origin[0] for x in range(width)]
+        #y_data = [x*spacing[1]+origin[1] for x in range(height)]
+
+    # Fill in 1 within sphere around nodule
+    #方形遮罩
+    #v_xrange与v_yrange即为生成遮罩的区域，可通过设置mask_size来调控方形遮罩的大小
+    #mask_size = 50 '''待修改'''
     v_xrange = range(v_xmin,v_xmax+1)
     v_yrange = range(v_ymin,v_ymax+1)
 
-    # Convert back to world coordinates for distance calculation
-    x_data = [x*spacing[0]+origin[0] for x in range(width)]
-    y_data = [x*spacing[1]+origin[1] for x in range(height)]
-
-    # Fill in 1 within sphere around nodule
+    for v_x in v_xrange:                #修改两个范围来规范遮罩的大小
+        for v_y in v_yrange:
+            p_x = spacing[0]*v_x + origin[0]
+            p_y = spacing[1]*v_y + origin[1]
+            mask[int((p_y-origin[1])/spacing[1]),int((p_x-origin[0])/spacing[0])] = 1.0
+    '''
+    #圆形遮罩
     for v_x in v_xrange:
         for v_y in v_yrange:
             p_x = spacing[0]*v_x + origin[0]
             p_y = spacing[1]*v_y + origin[1]
-            if np.linalg.norm(center-np.array([p_x,p_y,z]))<=diam:
+            if np.linalg.norm(center-np.array([p_x,p_y,z]))<=diam: #np.linalg.norm求范数，此处即求结节中心到遮罩中心坐标的距离，如果小于等于结节直径，则填黑
                 mask[int((p_y-origin[1])/spacing[1]),int((p_x-origin[0])/spacing[0])] = 1.0
+    '''
+    
     return(mask)
 
 def matrix2int16(matrix):
@@ -128,7 +141,7 @@ imgs = np.load(os.path.join(output_path, "images_0000_0000.npy"))
 masks = np.load(os.path.join(output_path, "masks_0000_0000.npy"))
 #显示图片
 for i in range(len(imgs)):
-    print ("image %d", i)
+    print ("image %d"% i)
     fig,ax = plt.subplots(2,2,figsize=[8,8])
     ax[0,0].imshow(imgs[i],cmap='gray')
     ax[0,1].imshow(masks[i],cmap='gray')
