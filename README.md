@@ -23,8 +23,16 @@
 
 - 解决了100M以上大小文件无法push的问题（直接重新加载库）注意之后若有100MB大小以上的文件，在commit时记得跳过它，这样就不会被上传了
 - 尝试过的解决办法在以下几个网站，都失败了
+<<<<<<< HEAD
    - [<https://blog.csdn.net/qq_33404395/article/details/80263709>]
    - [<https://www.cnblogs.com/qmmq/p/4604862.html>]
 - **注意**，调试代码时只用一份.mhd文件即可
+=======
+
+  [<https://blog.csdn.net/qq_33404395/article/details/80263709>]
+  [<https://www.cnblogs.com/qmmq/p/4604862.html>]
+
+- **注意**目前调试代码只用一份.mhd文件即可
+>>>>>>> 1684758f62f115d76e33739bfe1d8ddff9dee6be
 - *下次任务：方形遮罩优化*
 
