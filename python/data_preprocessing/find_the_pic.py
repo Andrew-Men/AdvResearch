@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Apr 17 09:23:54 2019
-
-@author: 49969
 """
 
 import SimpleITK as sitk
@@ -34,12 +32,12 @@ file_list=glob(os.path.join(luna_subset_path,"*.mhd"))
 
 def make_mask(center,diam,z,width,height,spacing,origin):
     '''
-Center : centers of circles px -- list of coordinates x,y,z
-diam : diameters of circles px -- diameter
-widthXheight : pixel dim of image
-spacing = mm/px conversion rate np array x,y,z
-origin = x,y,z mm np.array
-z = z position of slice in world coordinates mm
+    Center : centers of circles px -- list of coordinates x,y,z
+    diam : diameters of circles px -- diameter
+    widthXheight : pixel dim of image
+    spacing = mm/px conversion rate np array x,y,z
+    origin = x,y,z mm np.array
+    z = z position of slice in world coordinates mm
     '''
     mask = np.zeros([height,width]) # 0's everywhere except nodule swapping x,y to match img
     #convert to nodule space from world coordinates
