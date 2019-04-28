@@ -22,8 +22,9 @@ except:
     print('TQDM does make much nicer wait bars...')
     tqdm = lambda x: x
 
-luna_subset_path = os.path.join("subset0")
-output_path = os.path.join("output")
+working_dir = os.path.split(os.path.realpath(__file__))[0]
+luna_subset_path = os.path.join(working_dir, "subset0")
+output_path = os.path.join(working_dir, "output")
 file_list=glob(os.path.join(luna_subset_path,"*.mhd"))
 
 #####################
@@ -98,7 +99,7 @@ def get_filename(case):
 #####
 #
 # The locations of the nodes
-df_node = pd.read_csv("annotations.csv")
+df_node = pd.read_csv(os.path.join(working_dir, "annotations.csv"))
 df_node["file"] = df_node["seriesuid"].map(lambda file_name: get_filename(file_name))
 df_node = df_node.dropna()
 
