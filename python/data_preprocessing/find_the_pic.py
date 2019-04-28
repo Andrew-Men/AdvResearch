@@ -77,11 +77,11 @@ def make_mask(center,diam,z,width,height,spacing,origin):
             if np.linalg.norm(center-np.array([p_x,p_y,z]))<=diam: #np.linalg.norm求范数，此处即求结节中心到遮罩中心坐标的距离，如果小于等于结节直径，则填黑
                 mask[int((p_y-origin[1])/spacing[1]),int((p_x-origin[0])/spacing[0])] = 1.0
     '''
-    
+
     return(mask)
 
 def matrix2int16(matrix):
-    ''' 
+    '''
     matrix must be a numpy array NXN
     Returns uint16 version
     '''
