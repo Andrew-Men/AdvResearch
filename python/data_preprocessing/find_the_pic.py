@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Apr 17 09:23:54 2019
-
-@author: 49969
 """
 
 import SimpleITK as sitk
@@ -24,8 +22,9 @@ except:
     print('TQDM does make much nicer wait bars...')
     tqdm = lambda x: x
 
-luna_subset_path = os.path.join("subset0")
-output_path = os.path.join("output")
+working_dir = os.path.split(os.path.realpath(__file__))[0]
+luna_subset_path = os.path.join(working_dir, "subset0")
+output_path = os.path.join(working_dir, "output")
 file_list=glob(os.path.join(luna_subset_path,"*.mhd"))
 
 #####################
@@ -34,12 +33,12 @@ file_list=glob(os.path.join(luna_subset_path,"*.mhd"))
 
 def make_mask(center,diam,z,width,height,spacing,origin):
     '''
-Center : centers of circles px -- list of coordinates x,y,z
-diam : diameters of circles px -- diameter
-widthXheight : pixel dim of image
-spacing = mm/px conversion rate np array x,y,z
-origin = x,y,z mm np.array
-z = z position of slice in world coordinates mm
+    Center : centers of circles px -- list of coordinates x,y,z
+    diam : diameters of circles px -- diameter
+    widthXheight : pixel dim of image
+    spacing = mm/px conversion rate np array x,y,z
+    origin = x,y,z mm np.array
+    z = z position of slice in world coordinates mm
     '''
     mask = np.zeros([height,width]) # 0's everywhere except nodule swapping x,y to match img
     #convert to nodule space from world coordinates
@@ -78,11 +77,11 @@ z = z position of slice in world coordinates mm
             if np.linalg.norm(center-np.array([p_x,p_y,z]))<=diam: #np.linalg.norm求范数，此处即求结节中心到遮罩中心坐标的距离，如果小于等于结节直径，则填黑
                 mask[int((p_y-origin[1])/spacing[1]),int((p_x-origin[0])/spacing[0])] = 1.0
     '''
-    
+
     return(mask)
 
 def matrix2int16(matrix):
-    ''' 
+    '''
     matrix must be a numpy array NXN
     Returns uint16 version
     '''
@@ -100,7 +99,7 @@ def get_filename(case):
 #####
 #
 # The locations of the nodes
-df_node = pd.read_csv("annotations.csv")
+df_node = pd.read_csv(os.path.join(working_dir, "annotations.csv"))
 df_node["file"] = df_node["seriesuid"].map(lambda file_name: get_filename(file_name))
 df_node = df_node.dropna()
 
