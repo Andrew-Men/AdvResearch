@@ -32,5 +32,15 @@
 - 老师会找医生谈
 - 我们细读视频中提到的论文，做一个ppt
 
+## 2019.5.5 面谈记录
+
+- 汇报论文研读内容小结，详见文件夹中**.pdf**文件
+- *下次任务：*
+   - *继续研读论文，确定具体参数*
+   - *把有标记的数据可视化*
+   - *继续处理代码*
+   - *实现.mhd转.dcm代码功能*
+   - *先用有标记的数据做出初步结果，再细化数据*
+
 ## 把论文和其概述ppt&doc上传
 论文名称：Probability of Cancer in Pulmonary Nodules Detected on First Screening CT
