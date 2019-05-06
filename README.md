@@ -32,3 +32,5 @@
 - 老师会找医生谈
 - 我们细读视频中提到的论文，做一个ppt
 
+## 把论文和其概述ppt&doc上传
+论文名称：Probability of Cancer in Pulmonary Nodules Detected on First Screening CT
