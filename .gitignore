@@ -1,5 +1,5 @@
 
 .DS_Store
 *.npy
-matlab/imdb.mat
 python/data_preprocessing/.vscode/launch.json
+*.mat
