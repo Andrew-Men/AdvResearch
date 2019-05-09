@@ -3,3 +3,7 @@
 *.npy
 python/data_preprocessing/.vscode/launch.json
 *.mat
+.vscode/launch.json
+.vscode/ipch/b5f27cf855b3df15/main.ipch
+.vscode/ipch/b5f27cf855b3df15/mmap_address.bin
+annotation_v.csv
