@@ -44,3 +44,7 @@
 
 ## 把论文和其概述ppt&doc上传
 论文名称：Probability of Cancer in Pulmonary Nodules Detected on First Screening CT
+
+## 2019.5.9重要进展
+
+使用python的数据预处理代码现在切割出来的是50x50的矩阵了，下一步需要优化代码结构
