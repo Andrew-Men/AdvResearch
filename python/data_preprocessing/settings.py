@@ -1,0 +1,1 @@
+luna_root_path = "/Volumes/ExDrive2/gaojikeyanshixun/luna_raw/"

@@ -10,6 +10,7 @@ import os
 import glob
 import pandas as pd
 import scipy.io
+import settings
 
 # FIX CRASH #
 import matplotlib
@@ -26,10 +27,13 @@ except:
 
 # 定义工作目录和文件位置
 working_dir = os.path.split(os.path.realpath(__file__))[0]
-luna_subset_path = "/Users/eis/Desktop/subset0"
 annotations_path = os.path.join(working_dir, "annotations.csv")
 output_path = os.path.join(working_dir, "output")
-file_list=glob.glob(os.path.join(luna_subset_path,"*.mhd"))
+
+luna_root_path = settings.luna_root_path
+file_list = []
+for subpath in os.listdir(luna_root_path):
+	file_list.extend(glob.glob(os.path.join(luna_root_path, subpath, "*.mhd")))
 
 # 遗留函数，作用未知
 def matrix2int16(matrix):
