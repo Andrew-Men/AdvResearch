@@ -42,9 +42,18 @@
    - *实现.mhd转.dcm代码功能*
    - *先用有标记的数据做出初步结果，再细化数据*
 
-## 把论文和其概述ppt&doc上传
-论文名称：Probability of Cancer in Pulmonary Nodules Detected on First Screening CT
+## 2019.5.6 把论文和其概述ppt&doc上传
+- 论文名称：Probability of Cancer in Pulmonary Nodules Detected on First Screening CT
+- 上传.mhd读图软件
 
-## 2019.5.9重要进展
+## 2019.5.9 重要进展
 
-使用python的数据预处理代码现在切割出来的是50x50的矩阵了，下一步需要优化代码结构
+- 使用python的数据预处理代码现在切割出来的是50x50的矩阵了，~~下一步需要优化代码结构~~，优化完成
+
+## 2019.5.10 讨论记录
+
+- 代码解释，理解small_img切割算法和生成的数据格式（四维）
+- 讨论生成没有结节的对照集方法，在没有结节的范围内随机切割
+- 安装.mhd读图软件
+- *下次任务：*
+  - *生成对照集数据*
