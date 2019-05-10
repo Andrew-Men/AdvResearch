@@ -161,16 +161,18 @@ for fcount, img_file in enumerate(tqdm(file_list)):
             center = np.array([node_x, node_y, node_z])   # nodule center
             v_center = np.rint((center-origin)/spacing)  # nodule center in voxel space (still x,y,z ordering)
 
-
+            # 保存坐标转换后的结节位置坐标
             annotation = [seriesuid]
             annotation.extend(v_center.tolist())
             annotation.append(diam)
             v_axis_annotation_data.append(annotation)
 
             for i, i_z in enumerate(np.arange(int(v_center[2])-1, int(v_center[2])+2).clip(0, num_z-1)): # clip prevents going out of bounds in Z
-                mask = get_mask_position(center, diam, i_z*spacing[2]+origin[2], width, height, spacing, origin)
+
+                pos = get_mask_position(center, diam, i_z*spacing[2]+origin[2], width, height, spacing, origin)
+
                 temp_img = img_array[i_z]
-                small_img = temp_img[mask[0]:mask[0]+50,mask[1]:mask[1]+50] # nodule 50x50图片
+                small_img = temp_img[pos[0]:pos[0]+50,pos[1]:pos[1]+50] # nodule 50x50图片
                 imgs[i] = temp_img
                 sml_imgs[i] = small_img
                 if mask[2] == 1:
