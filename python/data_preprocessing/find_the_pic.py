@@ -30,8 +30,7 @@ working_dir = os.path.split(os.path.realpath(__file__))[0]
 annotations_path = os.path.join(working_dir, "annotations.csv")
 output_path = os.path.join(working_dir, "output")
 
-# luna_root_path = settings.luna_root_path
-luna_root_path = working_dir
+luna_root_path = settings.luna_root_path
 file_list = []
 for subpath in os.listdir(luna_root_path):
 	file_list.extend(glob.glob(os.path.join(luna_root_path, subpath, "*.mhd")))
