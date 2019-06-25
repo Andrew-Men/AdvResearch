@@ -30,7 +30,8 @@ working_dir = os.path.split(os.path.realpath(__file__))[0]
 annotations_path = os.path.join(working_dir, "annotations.csv")
 output_path = os.path.join(working_dir, "output")
 
-luna_root_path = settings.luna_root_path
+# luna_root_path = settings.luna_root_path
+luna_root_path = working_dir
 file_list = []
 for subpath in os.listdir(luna_root_path):
 	file_list.extend(glob.glob(os.path.join(luna_root_path, subpath, "*.mhd")))
@@ -100,28 +101,39 @@ def make_mask(center,diam,z,width,height,spacing,origin):
 
 # 返回一个有三个元素的tuple，前两个元素是要切割区域的左上角点的矩阵索引位置(y,x)
 # 第三个元素是一个标志位，用于警告上级函数nodule是否不在图片中心（因为太靠边缘导致）
-def get_mask_position(center,diam,z,width,height,spacing,origin):
-    SIZE = 50 # 数据切片大小 50*50
-    ORIGIN_SIZE = 512
-    notInTheCenterFlag = 0
+def get_nodule_img(center,spacing,origin,sourceImg):
+    SIZE = settings.noduleImgSize # 数据切片大小 50x50
+    ORIGIN_SIZE = settings.rawImgSize
     if diam/spacing[0] > SIZE:
         print("this nodule is bigger than 50x50 size!")
 
     v_center = (center-origin)/spacing
     v_xmin = int(v_center[0])-SIZE//2 + 1 # 加一保证 size 为 50x50
     v_ymin = int(v_center[1])-SIZE//2 + 1 # 加一保证 size 为 50x50
-
     lb = 0                  # low boundary
     ub = ORIGIN_SIZE-SIZE-1 # up boundary
     if v_xmin < lb | v_ymin < lb | v_xmin > ub | v_ymin > ub:
-        # nodule在边缘！nodule将不会在图片中心,返回 flag 通知上级函数
-        notInTheCenterFlag = 1
+        # nodule在边缘！nodule将不会在图片中心，print一个警告
+        print("nodule 不在图片的中心！")
     v_xmin = lb if v_xmin < lb else v_xmin
     v_ymin = lb if v_ymin < lb else v_ymin
     v_xmin = ub if v_xmin > ub else v_xmin
     v_ymin = ub if v_ymin > ub else v_ymin
+    small_img = sourceImg[v_ymin:v_ymin+SIZE,v_xmin:v_xmin+SIZE]
 
-    return (v_ymin,v_xmin,notInTheCenterFlag)
+    if ub-v_xmin > 2*SIZE:
+        if ub-v_ymin > 2*SIZE:
+            negitive_sml_img = sourceImg[v_ymin+SIZE:v_ymin+2*SIZE,v_xmin+SIZE:v_xmin+2*SIZE]
+        else:
+            negitive_sml_img = sourceImg[v_ymin-SIZE:v_ymin,v_xmin+SIZE:v_xmin+2*SIZE]
+    else:
+        if ub-v_ymin > 2*SIZE:
+            negitive_sml_img = sourceImg[v_ymin+SIZE:v_ymin+2*SIZE,v_xmin-SIZE:v_xmin]
+        else:
+            negitive_sml_img = sourceImg[v_ymin-SIZE:v_ymin,v_xmin-SIZE:v_xmin]
+
+
+    return (small_img,negitive_sml_img)
 
 # with each file
 def get_filename(case):
@@ -137,7 +149,8 @@ df_node = df_node.dropna()
 
 
 # Looping over the image files
-sml_img_data = []
+positive_data = []
+negitive_data = []
 v_axis_annotation_data = [] # 用于储存新的坐标系下的标记数据
 for fcount, img_file in enumerate(tqdm(file_list)):
     mini_df = df_node[df_node["file"]==img_file] #get all nodules associate with file
@@ -158,6 +171,7 @@ for fcount, img_file in enumerate(tqdm(file_list)):
             # keep 3 slices
             imgs = np.ndarray([3,height,width],dtype=np.int16)
             sml_imgs = np.ndarray([3,50,50],dtype=np.int16)
+            neg_sml_imgs = np.ndarray([3,50,50],dtype=np.int16)
             center = np.array([node_x, node_y, node_z])   # nodule center
             v_center = np.rint((center-origin)/spacing)  # nodule center in voxel space (still x,y,z ordering)
 
@@ -168,21 +182,21 @@ for fcount, img_file in enumerate(tqdm(file_list)):
             v_axis_annotation_data.append(annotation)
 
             for i, i_z in enumerate(np.arange(int(v_center[2])-1, int(v_center[2])+2).clip(0, num_z-1)): # clip prevents going out of bounds in Z
-
-                pos = get_mask_position(center, diam, i_z*spacing[2]+origin[2], width, height, spacing, origin)
-
-                temp_img = img_array[i_z]
-                small_img = temp_img[pos[0]:pos[0]+50,pos[1]:pos[1]+50] # nodule 50x50图片
-                imgs[i] = temp_img
+                imgs[i] = img_array[i_z]
+                small_img,neg_small_img = get_nodule_img(center, spacing, origin, img_array[i_z])
                 sml_imgs[i] = small_img
-                if mask[2] == 1:
-                    print("nodule 不在图片的中心！")
-            sml_img_data.append(sml_imgs)
+                neg_sml_imgs[i] = neg_small_img
+            positive_data.append(sml_imgs)
+            negitive_data.append(neg_sml_imgs)
+
+
 
 # 将切出的数据存储到 .npy 和 .mat中，方便后续使用
-sml_img_data = np.asarray(sml_img_data)
-np.save(os.path.join(output_path, 'sml_img_data'), sml_img_data)
-scipy.io.savemat(os.path.join(output_path, 'sml_img_data.mat'), {'sml_img_data': sml_img_data})
+positive_data = np.asarray(positive_data)
+np.save(os.path.join(output_path, 'positive_data'), positive_data)
+np.save(os.path.join(output_path, 'negitive_data'), negitive_data)
+scipy.io.savemat(os.path.join(output_path, 'positive_data.mat'), {'positive_data': positive_data})
+scipy.io.savemat(os.path.join(output_path, 'negitive_data.mat'), {'negitive_data': negitive_data})
 
 # 将转换坐标系后的标记存储到 annotation_v.csv
 with open(os.path.join(working_dir,'output','annotation_v.csv'), 'w') as csvFile:
