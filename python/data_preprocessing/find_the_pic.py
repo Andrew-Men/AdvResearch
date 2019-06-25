@@ -110,7 +110,6 @@ def get_nodule_img(center,spacing,origin,sourceImg):
     v_center = (center-origin)/spacing
     v_xmin = int(v_center[0])-SIZE//2 + 1 # 加一保证 size 为 50x50
     v_ymin = int(v_center[1])-SIZE//2 + 1 # 加一保证 size 为 50x50
-
     lb = 0                  # low boundary
     ub = ORIGIN_SIZE-SIZE-1 # up boundary
     if v_xmin < lb | v_ymin < lb | v_xmin > ub | v_ymin > ub:
@@ -120,9 +119,21 @@ def get_nodule_img(center,spacing,origin,sourceImg):
     v_ymin = lb if v_ymin < lb else v_ymin
     v_xmin = ub if v_xmin > ub else v_xmin
     v_ymin = ub if v_ymin > ub else v_ymin
-
     small_img = sourceImg[v_ymin:v_ymin+SIZE,v_xmin:v_xmin+SIZE]
-    return small_img
+
+    if ub-v_xmin > 2*SIZE:
+        if ub-v_ymin > 2*SIZE:
+            negitive_sml_img = sourceImg[v_ymin+SIZE:v_ymin+2*SIZE,v_xmin+SIZE:v_xmin+2*SIZE]
+        else:
+            negitive_sml_img = sourceImg[v_ymin-SIZE:v_ymin,v_xmin+SIZE:v_xmin+2*SIZE]
+    else:
+        if ub-v_ymin > 2*SIZE:
+            negitive_sml_img = sourceImg[v_ymin+SIZE:v_ymin+2*SIZE,v_xmin-SIZE:v_xmin]
+        else:
+            negitive_sml_img = sourceImg[v_ymin-SIZE:v_ymin,v_xmin-SIZE:v_xmin]
+
+
+    return (small_img,negitive_sml_img)
 
 # with each file
 def get_filename(case):
@@ -138,7 +149,8 @@ df_node = df_node.dropna()
 
 
 # Looping over the image files
-sml_img_data = []
+positive_data = []
+negitive_data = []
 v_axis_annotation_data = [] # 用于储存新的坐标系下的标记数据
 for fcount, img_file in enumerate(tqdm(file_list)):
     mini_df = df_node[df_node["file"]==img_file] #get all nodules associate with file
@@ -159,6 +171,7 @@ for fcount, img_file in enumerate(tqdm(file_list)):
             # keep 3 slices
             imgs = np.ndarray([3,height,width],dtype=np.int16)
             sml_imgs = np.ndarray([3,50,50],dtype=np.int16)
+            neg_sml_imgs = np.ndarray([3,50,50],dtype=np.int16)
             center = np.array([node_x, node_y, node_z])   # nodule center
             v_center = np.rint((center-origin)/spacing)  # nodule center in voxel space (still x,y,z ordering)
 
@@ -170,15 +183,20 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 
             for i, i_z in enumerate(np.arange(int(v_center[2])-1, int(v_center[2])+2).clip(0, num_z-1)): # clip prevents going out of bounds in Z
                 imgs[i] = img_array[i_z]
-                small_img = get_nodule_img(center, spacing, origin, img_array[i_z])
+                small_img,neg_small_img = get_nodule_img(center, spacing, origin, img_array[i_z])
                 sml_imgs[i] = small_img
+                neg_sml_imgs[i] = neg_small_img
+            positive_data.append(sml_imgs)
+            negitive_data.append(neg_sml_imgs)
 
-            sml_img_data.append(sml_imgs)
+
 
 # 将切出的数据存储到 .npy 和 .mat中，方便后续使用
-sml_img_data = np.asarray(sml_img_data)
-np.save(os.path.join(output_path, 'sml_img_data'), sml_img_data)
-scipy.io.savemat(os.path.join(output_path, 'sml_img_data.mat'), {'sml_img_data': sml_img_data})
+positive_data = np.asarray(positive_data)
+np.save(os.path.join(output_path, 'positive_data'), positive_data)
+np.save(os.path.join(output_path, 'negitive_data'), negitive_data)
+scipy.io.savemat(os.path.join(output_path, 'positive_data.mat'), {'positive_data': positive_data})
+scipy.io.savemat(os.path.join(output_path, 'negitive_data.mat'), {'negitive_data': negitive_data})
 
 # 将转换坐标系后的标记存储到 annotation_v.csv
 with open(os.path.join(working_dir,'output','annotation_v.csv'), 'w') as csvFile:
