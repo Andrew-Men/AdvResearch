@@ -108,7 +108,7 @@ model.compile(loss='binary_crossentropy', optimizer=sgd, metrics=['accuracy'])
 # datagen.fit(x_train)
 
 history = LossHistory()
-model.fit(x_train, y_train, steps_per_epoch=10, epochs=1, validation_data=(x_val,y_val), validation_steps=10, callbacks=[history])
+model.fit(x_train, y_train, steps_per_epoch=15, epochs=100, validation_data=(x_val,y_val), validation_steps=10, callbacks=[history])
 history.loss_plot()
 
 # for reproductive
