@@ -25,29 +25,6 @@ tf.set_random_seed(42)
 sess = tf.Session(graph=tf.get_default_graph())
 keras.backend.set_session(sess)
 
-# 读取和预处理数据
-def preProcessData():
-	imdata = []
-	labels = []
-
-	# read image.png file and store in a np.array
-	dataRootPath = os.path.join('..' ,'dataset01')
-	dataDirs = os.listdir(dataRootPath)
-
-	for subpath in os.listdir(dataRootPath):
-		imagePathList = glob.glob(os.path.join(dataRootPath, subpath, '*.png'))
-		for imagePath in imagePathList:
-			tempImage = imageio.imread(imagePath, as_gray=True).reshape(50,50,1)
-			imdata.append(tempImage)
-			labels.append(int(subpath))
-
-	datamean = np.mean(imdata, axis=0)
-	imdata = np.array(imdata) - datamean
-	labels = np.array(labels)
-
-	# save data to a .npz file
-	np.savez('data', imdata=imdata, labels=labels)
-
 def loadData():
 	working_dir = os.path.split(os.path.realpath(__file__))[0]
 	pos_data = np.load(os.path.join(working_dir,'positive_data.npy'))
