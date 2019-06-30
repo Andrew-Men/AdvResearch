@@ -12,3 +12,4 @@ python/data_preprocessing/__pycache__/settings.cpython-36.pyc
 !python/training/*
 python/training/.DS_Store
 data/.DS_Store
+*.png
