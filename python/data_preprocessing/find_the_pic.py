@@ -11,7 +11,6 @@ import glob
 import pandas as pd
 import scipy.io
 import settings
-import imageio
 
 # FIX CRASH #
 import matplotlib
@@ -182,8 +181,6 @@ for fcount, img_file in enumerate(tqdm(file_list)):
             v_axis_annotation_data.append(annotation)
 
             for i, i_z in enumerate(np.arange(int(v_center[2])-1, int(v_center[2])+2).clip(0, num_z-1)): # clip prevents going out of bounds in Z
-                # if i==1 and fcount<40:
-                #     imageio.imwrite(os.path.join(working_dir,'PNG','full_{}.png'.format(fcount)),img_array[i_z])
                 imgs[i] = img_array[i_z]
                 small_img,neg_small_img = get_nodule_img(center, spacing, origin, img_array[i_z])
                 sml_imgs[i] = small_img
