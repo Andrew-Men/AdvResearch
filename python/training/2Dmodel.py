@@ -1,10 +1,12 @@
 #!/usr/local/anaconda3/envs/kaggle/bin python
 import os
+os.environ["KERAS_BACKEND"] = "plaidml.keras.backend"
+
 import glob
 import numpy as np
 import imageio
 import keras
-import tensorflow as tf
+# import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 from keras.models import Sequential
@@ -20,10 +22,10 @@ if platform.system() == 'Darwin':
 from matplotlib import pyplot as plt
 
 # for reproductive
-np.random.seed(42)
-tf.set_random_seed(42)
-sess = tf.Session(graph=tf.get_default_graph())
-keras.backend.set_session(sess)
+# np.random.seed(42)
+# tf.set_random_seed(42)
+# sess = tf.Session(graph=tf.get_default_graph())
+# keras.backend.set_session(sess)
 
 def loadData():
 	working_dir = os.path.split(os.path.realpath(__file__))[0]
@@ -92,7 +94,7 @@ model.add(Dropout(0.4))
 model.add(MaxPool2D((2, 2)))
 model.add(Activation('relu'))
 model.add(Conv2D(10, (3, 3), strides=1, padding='valid'))
-odel.add(Activation('relu'))
+model.add(Activation('relu'))
 model.add(MaxPool2D((2, 2)))
 model.add(Activation('relu'))
 model.add(Flatten())
